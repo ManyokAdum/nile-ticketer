@@ -27,7 +27,7 @@ const systemFeatures = [
     description: 'Review issued tickets and recent bookings for all passengers.',
     icon: Users,
     actionLabel: 'Open Passenger Dashboard',
-    path: '/dashboard',
+    path: '/my-tickets',
   },
   {
     label: 'Routes & Fares',

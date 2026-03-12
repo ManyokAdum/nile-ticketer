@@ -145,4 +145,8 @@
   .seat-pending {
     @apply bg-warning/10 border-2 border-warning text-warning animate-pulse cursor-pointer;
   }
+
+  .seat-mine {
+    @apply bg-primary border-2 border-primary text-primary-foreground ring-2 ring-primary/40 ring-offset-2;
+  }
 }

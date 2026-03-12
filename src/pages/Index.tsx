@@ -32,21 +32,7 @@ export default function Index() {
               Modern intercity bus ticketing with QR boarding, real-time seat management, and smart late-arrival handling.
             </p>
           </motion.div>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="flex flex-col sm:flex-row gap-3 justify-center"
-          >
-            <Link to="/login">
-              <Button
-                size="lg"
-                className="bg-primary-foreground text-foreground hover:bg-primary-foreground/90 font-heading font-semibold px-8"
-              >
-                Login <ArrowRight className="h-4 w-4 ml-2" />
-              </Button>
-            </Link>
-          </motion.div>
+          {/* CTA is handled via the navbar login button; hero remains informational */}
         </div>
       </section>
 

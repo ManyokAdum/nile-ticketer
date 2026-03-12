@@ -44,7 +44,7 @@ export const useBookingStore = create<BookingState>((set) => ({
 export const useAppStore = create<AppState>((set) => ({
   currentRole: 'passenger',
   setRole: (role) => set({ currentRole: role }),
-  isLoggedIn: true,
+  isLoggedIn: false,
   setLoggedIn: (v) => set({ isLoggedIn: v }),
   userName: 'John Kamau',
 }));

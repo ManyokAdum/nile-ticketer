@@ -1,40 +1,30 @@
-import { Bus, User, LogOut, Menu, X } from 'lucide-react';
-import { useState } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { useAppStore } from '@/lib/store';
-import { Button } from '@/components/ui/button';
+import { Bus, User, LogOut, Menu, X, MapPin } from "lucide-react";
+import { useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useAppStore } from "@/lib/store";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+} from "@/components/ui/dropdown-menu";
+import { routes } from "@/lib/mock-data";
 
-const roleNavItems: Record<string, { label: string; path: string }[]> = {
-  passenger: [
-    { label: 'Book Trip', path: '/book' },
-    { label: 'My Tickets', path: '/dashboard' },
-  ],
-  staff: [
-    { label: 'Ticketing', path: '/book' },
-    { label: 'Dashboard', path: '/staff' },
-  ],
-  admin: [
-    { label: 'Dashboard', path: '/admin' },
-    { label: 'Routes', path: '/admin/routes' },
-  ],
-  conductor: [
-    { label: 'Scanner', path: '/scanner' },
-  ],
-};
+const mainNavItems = [
+  { label: "Home", path: "/" },
+  { label: "Search Bus", path: "/search" },
+  { label: "Routes", path: "/book" },
+  { label: "My Tickets", path: "/my-tickets" },
+  { label: "Contact", path: "/contact" },
+];
 
 export default function AppHeader() {
-  const { currentRole, setRole, setLoggedIn, isLoggedIn } = useAppStore();
+  const { currentRole, setLoggedIn, isLoggedIn } = useAppStore();
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
   const navigate = useNavigate();
-  const navItems = roleNavItems[currentRole] || [];
 
   return (
     <header className="sticky top-0 z-50 glass-card-elevated border-b">
@@ -48,19 +38,69 @@ export default function AppHeader() {
 
         {/* Desktop nav */}
         <nav className="hidden md:flex items-center gap-1">
-          {navItems.map((item) => (
-            <Link
-              key={item.path}
-              to={item.path}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                location.pathname === item.path
-                  ? 'bg-primary/10 text-primary'
-                  : 'text-muted-foreground hover:text-foreground hover:bg-secondary'
-              }`}
-            >
-              {item.label}
-            </Link>
-          ))}
+          {mainNavItems.map((item) =>
+            item.path === "/book" ? (
+              <DropdownMenu key={item.path}>
+                <DropdownMenuTrigger asChild>
+                  <button
+                    type="button"
+                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                      location.pathname === item.path
+                        ? "bg-primary/10 text-primary"
+                        : "text-muted-foreground hover:text-foreground hover:bg-secondary"
+                    }`}
+                  >
+                    {item.label}
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-80">
+                  <div className="px-3 py-2 border-b text-xs text-muted-foreground">
+                    Available buses & routes
+                  </div>
+                  {routes.map((route) => (
+                    <DropdownMenuItem
+                      key={route.id}
+                      className="flex flex-col items-start gap-0.5"
+                      onClick={() =>
+                        navigate(`/book?routeId=${route.id}`)
+                      }
+                    >
+                      <span className="flex items-center gap-1 text-sm font-medium">
+                        <MapPin className="h-3 w-3 text-primary" />
+                        {route.from} &rarr; {route.to}
+                      </span>
+                      <span className="text-[11px] text-muted-foreground">
+                        {route.distance} · {route.duration} · SSP{" "}
+                        {route.price.toLocaleString()}
+                      </span>
+                    </DropdownMenuItem>
+                  ))}
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    onClick={() => navigate("/book")}
+                    className="justify-between"
+                  >
+                    Go to booking
+                    <span className="text-[11px] text-muted-foreground">
+                      /book
+                    </span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <Link
+                key={item.path}
+                to={item.path}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                  location.pathname === item.path
+                    ? "bg-primary/10 text-primary"
+                    : "text-muted-foreground hover:text-foreground hover:bg-secondary"
+                }`}
+              >
+                {item.label}
+              </Link>
+            ),
+          )}
         </nav>
 
         <div className="flex items-center gap-2">
@@ -74,16 +114,11 @@ export default function AppHeader() {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => setRole('passenger')}>Passenger</DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setRole('staff')}>Ticketing Staff</DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setRole('admin')}>Admin</DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setRole('conductor')}>Conductor</DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   className="text-destructive"
                   onClick={() => {
                     setLoggedIn(false);
-                    setRole('passenger');
                     navigate('/');
                     setMobileOpen(false);
                   }}
@@ -115,31 +150,46 @@ export default function AppHeader() {
       {mobileOpen && (
         <div className="md:hidden border-t bg-card p-4 animate-fade-in">
           <div className="flex flex-col gap-1">
-            {navItems.map((item) => (
+            {mainNavItems.map((item) => (
               <Link
                 key={item.path}
                 to={item.path}
                 onClick={() => setMobileOpen(false)}
                 className={`px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
                   location.pathname === item.path
-                    ? 'bg-primary/10 text-primary'
-                    : 'text-muted-foreground hover:bg-secondary'
+                    ? "bg-primary/10 text-primary"
+                    : "text-muted-foreground hover:bg-secondary"
                 }`}
               >
                 {item.label}
               </Link>
             ))}
-            <div className="border-t mt-2 pt-2">
-              <p className="px-4 py-1 text-xs text-muted-foreground">Switch Role (Demo)</p>
-              {(['passenger', 'staff', 'admin', 'conductor'] as const).map((role) => (
-                <button
-                  key={role}
-                  onClick={() => { setRole(role); setMobileOpen(false); }}
-                  className={`w-full text-left px-4 py-2 rounded-lg text-sm capitalize ${currentRole === role ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground'}`}
-                >
-                  {role}
-                </button>
-              ))}
+            {/* simple route list under Book Ticket for mobile */}
+            <div className="mt-3 border-t pt-3">
+              <p className="px-1 pb-1 text-xs font-medium text-muted-foreground">
+                Available buses & routes
+              </p>
+              <div className="max-h-40 overflow-y-auto space-y-1">
+                {routes.map((route) => (
+                  <button
+                    key={route.id}
+                    onClick={() => {
+                      navigate(`/book?routeId=${route.id}`);
+                      setMobileOpen(false);
+                    }}
+                    className="w-full text-left px-2 py-1.5 rounded-lg text-xs hover:bg-secondary flex flex-col"
+                  >
+                    <span className="flex items-center gap-1 font-medium">
+                      <MapPin className="h-3 w-3 text-primary" />
+                      {route.from} → {route.to}
+                    </span>
+                    <span className="text-[10px] text-muted-foreground">
+                      {route.distance} · {route.duration} · SSP{" "}
+                      {route.price.toLocaleString()}
+                    </span>
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
         </div>

@@ -1,49 +1,31 @@
-import { useNavigate } from 'react-router-dom';
-import { Ticket, Users, ShieldCheck, QrCode } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { useAppStore } from '@/lib/store';
-import { motion } from 'framer-motion';
+import { useNavigate } from "react-router-dom";
+import { Ticket, Users, ShieldCheck } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { motion } from "framer-motion";
 
 const loginOptions = [
   {
-    role: 'passenger' as const,
-    label: 'Passenger',
-    description: 'Book trips and manage your tickets.',
+    label: "Passenger",
+    description: "Book trips and manage your tickets.",
     icon: Ticket,
-    target: '/dashboard',
+    target: "/login/passenger",
   },
   {
-    role: 'staff' as const,
-    label: 'Ticketing Staff',
-    description: 'Handle bookings and assist passengers at the terminal.',
+    label: "Ticketing Staff",
+    description: "Handle bookings and assist passengers at the terminal.",
     icon: Users,
-    target: '/staff',
+    target: "/login/staff",
   },
   {
-    role: 'admin' as const,
-    label: 'Admin',
-    description: 'Monitor system performance and manage routes and operations.',
+    label: "Admin Dashboard",
+    description: "Monitor system performance and manage routes and operations.",
     icon: ShieldCheck,
-    target: '/admin',
-  },
-  {
-    role: 'conductor' as const,
-    label: 'Conductor',
-    description: 'Scan QR tickets and validate boarding on the bus.',
-    icon: QrCode,
-    target: '/scanner',
+    target: "/admin/login",
   },
 ];
 
 export default function LoginPage() {
-  const { setRole, setLoggedIn } = useAppStore();
   const navigate = useNavigate();
-
-  const handleLogin = (role: (typeof loginOptions)[number]['role'], target: string) => {
-    setRole(role);
-    setLoggedIn(true);
-    navigate(target);
-  };
 
   return (
     <div className="container max-w-3xl py-12 space-y-8">
@@ -54,7 +36,7 @@ export default function LoginPage() {
         </p>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2">
+      <div className="grid gap-4 md:grid-cols-3">
         {loginOptions.map((option, i) => (
           <motion.div
             key={option.label}
@@ -68,7 +50,9 @@ export default function LoginPage() {
                 <option.icon className="h-5 w-5 text-primary-foreground" />
               </div>
               <div>
-                <h2 className="font-heading font-semibold text-lg">{option.label}</h2>
+                <h2 className="font-heading font-semibold text-lg">
+                  {option.label}
+                </h2>
                 <p className="text-sm text-muted-foreground mt-1">
                   {option.description}
                 </p>
@@ -76,9 +60,12 @@ export default function LoginPage() {
             </div>
             <div className="flex justify-between items-center">
               <span className="text-xs text-muted-foreground">
-                You will be redirected to: <span className="font-mono text-foreground">{option.target}</span>
+                Destination:{" "}
+                <span className="font-mono text-foreground">
+                  {option.target}
+                </span>
               </span>
-              <Button size="sm" onClick={() => handleLogin(option.role, option.target)}>
+              <Button size="sm" onClick={() => navigate(option.target)}>
                 Continue
               </Button>
             </div>

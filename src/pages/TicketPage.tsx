@@ -36,7 +36,7 @@ export default function TicketPage() {
 
   return (
     <div className="container max-w-md py-8">
-      <Link to="/dashboard">
+      <Link to="/my-tickets">
         <Button variant="ghost" size="sm" className="text-muted-foreground mb-4">
           <ArrowLeft className="h-4 w-4 mr-1" /> Back to Dashboard
         </Button>

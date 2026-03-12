@@ -1,15 +1,16 @@
 import { Link } from 'react-router-dom';
-import { Ticket, MapPin, ArrowRight, Clock, QrCode, Calendar } from 'lucide-react';
+import { Ticket, MapPin, ArrowRight, Clock, QrCode, Calendar, Bus } from 'lucide-react';
 import { sampleTickets } from '@/lib/mock-data';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
+import TicketSeatMap from '@/components/booking/TicketSeatMap';
 
 export default function PassengerDashboard() {
   return (
     <div className="container max-w-3xl py-8 space-y-8">
       <div>
         <h1 className="text-3xl font-heading font-bold">My Tickets</h1>
-        <p className="text-muted-foreground mt-1">View and manage your bookings</p>
+        <p className="text-muted-foreground mt-1">View and manage your bookings across all routes</p>
       </div>
 
       <Link to="/book">
@@ -19,7 +20,16 @@ export default function PassengerDashboard() {
       </Link>
 
       <div className="space-y-4">
-        <h2 className="font-heading font-semibold text-lg">Recent Bookings</h2>
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <h2 className="font-heading font-semibold text-lg flex items-center gap-2">
+            <Bus className="h-5 w-5" /> Booked Seats on All Routes
+          </h2>
+          <div className="flex items-center gap-3 text-xs text-muted-foreground">
+            <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded seat-mine" /> Your seat</span>
+            <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded seat-occupied" /> Occupied</span>
+            <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded seat-available" /> Available</span>
+          </div>
+        </div>
         {sampleTickets.map((ticket, i) => (
           <motion.div
             key={ticket.id}
@@ -29,8 +39,8 @@ export default function PassengerDashboard() {
           >
             <Link to={`/ticket/${ticket.id}`}>
               <div className="glass-card-elevated rounded-xl p-5 hover:border-primary/30 hover:shadow-[var(--shadow-glow)] transition-all">
-                <div className="flex items-start justify-between">
-                  <div className="space-y-2">
+                <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+                  <div className="space-y-2 flex-1">
                     <div className="flex items-center gap-2">
                       <MapPin className="h-4 w-4 text-primary" />
                       <span className="font-heading font-semibold">{ticket.trip.route.from}</span>
@@ -48,9 +58,14 @@ export default function PassengerDashboard() {
                       }`}>{ticket.status}</span>
                     </div>
                   </div>
-                  <div className="text-right">
-                    <p className="font-heading font-bold text-primary">Seat {ticket.seatNumber}</p>
-                    <QrCode className="h-8 w-8 text-muted-foreground mt-2 ml-auto" />
+                  <div className="flex sm:flex-col items-center sm:items-end gap-4 sm:gap-0">
+                    <div className="text-center sm:text-right">
+                      <p className="font-heading font-bold text-primary">Seat {ticket.seatNumber}</p>
+                      <QrCode className="h-8 w-8 text-muted-foreground mt-2 mx-auto sm:ml-auto sm:mr-0" />
+                    </div>
+                    <div className="shrink-0">
+                      <TicketSeatMap ticket={ticket} />
+                    </div>
                   </div>
                 </div>
               </div>
